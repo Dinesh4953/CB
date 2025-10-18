@@ -21,10 +21,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from users import views
-from views import starting_page
+from campus_bridge.views import starting_page
 urlpatterns = [  
     path('admin/', admin.site.urls),
-    path('', include('academics.urls')),  # ← include app-level URLs here
+    path('academics/', include('academics.urls')),  # ← include app-level URLs here
     path('login/', auth_views.LoginView.as_view(template_name = 'users/login.html'),name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page = "login"), name='logout'),
     path('register/', views.register, name='register'),
@@ -33,6 +33,6 @@ urlpatterns = [
     path('practice/', include('practice.urls')),
      path('solved/', views.solved_problems_view, name='solved_problems'),
     path('pdf/', include('cv.urls')),
-    path('index/',starting_page, name='starting_page' )
+    path('',starting_page, name='starting_page' )
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

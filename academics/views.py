@@ -10,7 +10,7 @@ from .ai import get_final_answer
 
 
 def index(request):
-    return render(request, 'academics/index.html')
+    return render(request, 'academics/index1.html')
 
 
 class CourseListView(ListView):

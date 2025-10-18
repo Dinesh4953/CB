@@ -5,7 +5,7 @@ from .views import CourseListView, CourseDetailView, SubjectList, branch_subject
 from academics import views
 
 urlpatterns = [
-    path('', views.index, name = 'index'),
+    path('index_main', views.index, name = 'index'),
     path('courses/', CourseListView.as_view(), name='course_list'),
     path('course/<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
     path('subjects', SubjectList.as_view(), name='subject_list'),
