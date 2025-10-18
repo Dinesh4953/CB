@@ -12,7 +12,8 @@ urlpatterns = [
     path('subjects/select-branch/', views.branch_subject_view, name='branch_subjects'),
     path("ai/", views.ask_gemini, name="ask_gemini"),
     path("run_code/", views.run_code, name="run_code"),
-    path("run_code_big/", views.run_code_big, name="run_code_big")
+    path("run_code_big/", views.run_code_big, name="run_code_big"),
+    path("whiteboard/", views.white_board, name="whiteboard"),
     # path("languages/", views.languages, name="languages"),
     # path("languages/python", views.python_language, name="python_language")
     

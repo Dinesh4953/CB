@@ -1,0 +1,159 @@
+{% extends 'academics/base.html' %}
+{% comment %} 
+{% block body %}
+<div>
+    <div>
+        <input type="color" id="colorPicker" value="#000000" title="Choose Color"/>
+        <input type="number" id="thickness" min="1" max="20" value="3" title="Brush Size" style="width:50px;"/>
+        <button id="pencilBtn" class="tool-btn">Pencil</button>
+        <button id="eraserBtn" class="tool-btn">Eraser</button>
+        <button id="undoBtn" class="tool-btn">Undo</button>
+        <button id="redoBtn" class="tool-btn">Redo</button>
+        <button id="clearBtn" class="tool-btn" style="background:red;color:white;">Clear</button>
+        <button id="saveBtn" class="tool-btn" style="background:green;color:white;">Save</button>
+        <button id="loadBtn" class="tool-btn" style="background:blue;color:white;">Load</button>
+    </div>
+
+  <div id="whiteboard" style="height: 500px;"></div>
+
+  </div>
+    <button class="btn" id="saveBtn">Save Drawing</button>
+    <button class="btn" id="loadBtn">Load Drawing</button>
+
+  <script src="https://unpkg.com/@excalidraw/excalidraw/dist/excalidraw.min.js"></script>
+  <script>
+    $(document).ready(function(){
+        const excalidrawWrapper = $('#whiteboard')[0];
+        const excalidraw = new Excalidraw.Excalidraw({
+            parent : excalidrawWrapper
+        });
+    let savedDrawing = null;
+    $('#pencilBtn').click(function(){
+        excalidraw.updateAppState({
+            currentItemType: "freedraw",
+            currentItemStrokeColor : $('#colorPicker').val(),
+            currentItemStrokeWidth : parseInt($('#thickness').val())
+        });
+ });
+ $("#eraserBtn").click(function(){
+    excalidraw.updateAppState({
+        currentItemType: "eraser"
+    });
+ });
+ $("#undoBtn").click(function(){
+    excalidraw.history.undo();
+ });
+ $("#redoBtn").click(function(){
+    excalidraw.history.redo();
+ });
+ $('#clearBtn').click(function(){
+    excalidraw.updateScene({
+        elements:[]
+    });
+ });
+ $("#downloadBtn").click(async function(){
+    const element = excalidraw.getSceneElements();
+    if(element.length==0){
+        alert("Nothing to save");
+        return;
+    }
+    const app_data = excalidraw.getAppState();
+
+    const blob = await Excalidraw.exportToBlob({
+        elements: element,
+        appState: app_data,
+        mimeType : "image/png",
+        quality: 1,
+        exportBackground: true,
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "my_drawing.png";
+    a.click();
+    URL.revokeObject(url);
+
+ });
+    });
+
+
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+ {% endcomment %}
+
+
+
+{% block body %}
+<h2>Interactive Whiteboard</h2>
+
+<div id="whiteboard-container" style="border:1px solid #ccc; height:600px; position:relative;">
+    <!-- Toolbar -->
+    <div style="position:absolute; top:0; left:0; width:100%; background:#f0f0f0; padding:10px; display:flex; gap:10px; align-items:center; z-index:10;">
+        <input type="color" id="colorPicker" value="#000000" title="Choose Color"/>
+        <input type="number" id="thickness" min="1" max="20" value="3" title="Brush Size" style="width:50px;"/>
+        <button id="pencilBtn" class="tool-btn">Pencil</button>
+        <button id="eraserBtn" class="tool-btn">Eraser</button>
+        <button id="undoBtn" class="tool-btn">Undo</button>
+        <button id="redoBtn" class="tool-btn">Redo</button>
+        <button id="clearBtn" class="tool-btn" style="background:red;color:white;">Clear</button>
+        <button id="downloadBtnBtn" class="tool-btn" style="background:green;color:white;">Download</button>
+    </div>
+
+    <!-- Whiteboard area -->
+    <div id="whiteboard" style="height:100%; margin-top:60px; z-index:1;"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://unpkg.com/@excalidraw/excalidraw/dist/excalidraw.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const excalidrawWrapper = $('#whiteboard')[0];
+    const excalidraw = new Excalidraw.Excalidraw({ parent: excalidrawWrapper });
+
+    let savedDrawing = null;
+
+    // Ensure pencil is active after Excalidraw renders
+    setTimeout(() => {
+        excalidraw.updateAppState({
+            currentItemType: "freedraw",
+            currentItemStrokeColor: '#000000',
+            currentItemStrokeWidth: 3
+        });
+    }, 200);
+
+    $('#pencilBtn').click(() => {
+        excalidraw.updateAppState({
+            currentItemType: "freedraw",
+            currentItemStrokeColor: $('#colorPicker').val(),
+            currentItemStrokeWidth: parseInt($('#thickness').val())
+        });
+    });
+
+    $('#eraserBtn').click(() => excalidraw.updateAppState({ currentItemType: "eraser" }));
+
+    $('#undoBtn').click(() => excalidraw.history.undo());
+    $('#redoBtn').click(() => excalidraw.history.redo());
+    $('#clearBtn').click(() => excalidraw.updateScene({ elements: [] }));
+    $('#downloadBtnBtn').click(() => { savedDrawing = excalidraw.getSceneElements(); alert("Drawing saved!"); });
+    
+
+    $('#colorPicker, #thickness').change(() => {
+        excalidraw.updateAppState({
+            currentItemType: "freedraw",
+            currentItemStrokeColor: $('#colorPicker').val(),
+            currentItemStrokeWidth: parseInt($('#thickness').val())
+        });
+    });
+});
+
+</script>
+{% endblock %}
+

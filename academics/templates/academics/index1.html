@@ -6,7 +6,7 @@
 <div class="text-center">
   <h1 class="mt-4">Welcome to Campus Bridge</h1>
   <p class="lead">Your one-stop platform for learning, coding, and career growth.</p>
-
+  
   {% if user.is_authenticated %}
     <p class="text-success">Logged in as: <strong>{{ user.username }}</strong></p>
     <a href="{% url 'course_list' %}" class="btn btn-primary m-2">Coding Languages</a>
@@ -15,6 +15,7 @@
     <a href="{% url 'ask_gemini' %}" class="btn btn-primary m-2">Ask AI</a>
     <a href="{% url 'run_code_big' %}" class="btn btn-primary m-2">MultiCode Compiler</a>
     <a href="{% url 'accept' %}" class="btn btn-primary m-2">Make Your CV</a>
+    <a href="{% url 'whiteboard' %}" class="btn btn-primary m-2">White</a>
 
   {% else %}
     <a href="{% url 'login' %}" class="btn btn-primary m-2">Login</a>

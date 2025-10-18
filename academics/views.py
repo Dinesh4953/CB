@@ -253,3 +253,7 @@ def run_code_big(request):
         "DEFAULT_CODE": DEFAULT_CODE
     }
     return render(request, "academics/coding_langs/big_compiler.html", context)
+
+@login_required
+def white_board(request):
+    return render(request, 'white_board.html')

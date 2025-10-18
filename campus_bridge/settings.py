@@ -11,27 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# from supabase import create_client
-# SUPABASE_URL = os.getenv("SUPABASE_URL")
-# SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'DINESH@2006',  # your actual password
-        'HOST': 'db.ewrnbmricovphhyuhlfr.supabase.co',
-        'PORT': '5432',
-    }
-}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -40,9 +23,9 @@ DATABASES = {
 SECRET_KEY = "django-insecure-1zd-()-(7g%ujzdsq+xrh5#p@$ahp**u)w3i81q1h_6&!xrmi3"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*", ".vercel.app", "localhost", "127.0.0.1","learn-peak.onrender.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -62,7 +45,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -95,40 +77,13 @@ WSGI_APPLICATION = "campus_bridge.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "postgres",
-#         "USER": "postgres",
-#         "PASSWORD": "DINESH@2006",  # You can remove this once you use DATABASE_URL env
-#         "HOST": "db.ewrnbmricovphhyuhlfr.supabase.co",
-#         "PORT": "5432",
-#         "OPTIONS": {
-#             "sslmode": "require",  # ensures SSL connection
-#         },
-#     }
-# }
-# DATABASES = {
-#     "default": dj_database_url.config(
-#         default=os.environ.get("DATABASE_URL"),
-#         conn_max_age=600,       # Enables persistent connections
-#         ssl_require=True        # Enforces SSL for Supabase
-#     )
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
-# Override with DATABASE_URL from Vercel environment variables if present
-# if os.environ.get("DATABASE_URL"):
-#     DATABASES["default"] = dj_database_url.parse(
-#         os.environ.get("DATABASE_URL"), 
-#         conn_max_age=600,  # persistent connections
-#         ssl_require=True
-#     )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -167,9 +122,7 @@ LOGIN_REDIRECT_URL = "index"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]  # if you have a "static/" folder in your project
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "static/"
 MEDIA_URL  = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
