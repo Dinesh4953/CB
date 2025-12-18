@@ -82,24 +82,61 @@ def branch_subject_view(request):
     })
 
 
-def ask_gemini(request):
-    response = ""
-    prompt = ""
-    
-    if request.method == "POST":
-        prompt = request.POST.get("prompt")
-        if prompt:
-            response = get_final_answer(prompt)
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"response": response})
-   
-    return render(request, "academics/ai.html", 
-                   {"response": response,
-        "prompt": prompt})
-    
-    
-    
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from groq import Groq
+import os
 
+# Initialize Groq client once
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+@csrf_exempt
+def ask_gemini(request):   # ⬅ keep SAME name (important)
+
+    # ✅ PAGE LOAD
+    if request.method == "GET":
+        return render(request, "academics/ai.html")
+
+    # ✅ AI CHAT
+    if request.method == "POST":
+        try:
+            prompt = request.POST.get("prompt", "").strip()
+
+            if not prompt:
+                return JsonResponse({"response": "Please type something."})
+
+            # 🔥 GROQ AI RESPONSE
+            response = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are AI-Tutor, a helpful programming tutor. Explain clearly with examples when needed."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                temperature=0.3,
+                max_tokens=700
+            )
+
+            ai_text = response.choices[0].message.content
+
+            return JsonResponse({
+                "response": ai_text
+            })
+
+        except Exception as e:
+            print("GROQ ERROR:", e)
+            return JsonResponse(
+                {"response": "⚠️ AI service error"},
+                status=500
+            )
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
 

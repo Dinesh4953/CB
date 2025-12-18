@@ -1,6 +1,5 @@
 {% extends 'academics/base.html' %}
 
-
 {% block body %}
 <style>
   body, html {
@@ -31,7 +30,7 @@
     border-radius: 10px;
     max-width: 80%;
     word-wrap: break-word;
-    white-space: pre-wrap;
+    white-space: normal;
   }
 
   .user-message {
@@ -42,6 +41,18 @@
   .ai-message {
     align-self: flex-start;
     background-color: #1f1f1f;
+  }
+
+  pre {
+    background: #0b0b0b;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-top: 0.8rem;
+  }
+
+  code {
+    font-size: 0.9rem;
   }
 
   .input-bar {
@@ -100,51 +111,82 @@
   </form>
 </div>
 
-<!-- ✅ jQuery (Required) -->
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Prism -->
 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+
 <script>
   const chatBox = $('#chat-box');
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
 
   function appendMessage(text, type) {
     const message = $('<div></div>')
       .addClass('chat-message')
-      .addClass(type === 'user' ? 'user-message' : 'ai-message')
-      //.text(text);
-      chatBox.append(message);
-      chatBox.scrollTop(chatBox[0].scrollHeight);
-      if (type=='ai'){
-        let i =0;
-        const interval = setInterval(function(){
-          message.text(message.text()+text.charAt(i));
-          i++;
-          if(text.charAt(i)==="`" && text.charAt(i+1)==="`"){
-            $('<pre><code></code></pre>').addClass('chat-message')
-          }
-          chatBox.scrollTop(chatBox[0].scrollHeight);
-          if(i >= text.length) clearInterval(interval);
-        }, 20);
-      }else{
-        message.text(text);
+      .addClass(type === 'user' ? 'user-message' : 'ai-message');
+
+    chatBox.append(message);
+
+    if (type === 'ai') {
+      let formatted = "";
+      let lastIndex = 0;
+      const regex = /```(\w+)?\n([\s\S]*?)```/g;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        // Text before code
+        formatted += escapeHtml(text.slice(lastIndex, match.index))
+          .replace(/\n/g, "<br>");
+
+        const lang = match[1] || "python";
+        const code = escapeHtml(match[2]);
+
+        // Code block (preserve newlines)
+        formatted += `
+<pre><code class="language-${lang}">
+${code}
+</code></pre>`;
+
+        lastIndex = regex.lastIndex;
       }
-    
-    
+
+      // Remaining text
+      formatted += escapeHtml(text.slice(lastIndex))
+        .replace(/\n/g, "<br>");
+
+      message.html(formatted);
+      Prism.highlightAll();
+
+    } else {
+      message.text(text);
+    }
+
+    chatBox.scrollTop(chatBox[0].scrollHeight);
   }
 
   $('#chat-form').on('submit', function (e) {
     e.preventDefault();
+
     const prompt = $('#prompt-input').val().trim();
     if (!prompt) return;
 
-    $('#welcome-text').remove();  // remove welcome on first question
+    $('#welcome-text').remove();
     appendMessage(prompt, 'user');
-    $('#prompt-input').val(''); // clear input
+    $('#prompt-input').val('');
 
     $.ajax({
       type: 'POST',
-      url: '{% url "ask_gemini" %}',  // Your Django URL pattern
+      url: '{% url "ask_gemini" %}',
       data: {
         prompt: prompt,
         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
