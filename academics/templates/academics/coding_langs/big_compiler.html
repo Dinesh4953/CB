@@ -55,12 +55,7 @@
     {% endfor %}
   </select>
 </div>
-        {% comment %} <!-- Code editor -->
-        <div class="mb-4">
-          <label for="code" class="form-label fw-bold">Write your code:</label>
-<pre><code class="language-{{ active_language }}">{{ code|default:"" }}</code></pre>
-        </div> {% endcomment %}
-
+       
 
         <!-- Code editor -->
  <div class="mb-4">
@@ -73,24 +68,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.1/ace.js"></script>
 
 
-{% comment %} <script> 
-   // Initialize Ace Editor 
-   const DEFAULT_CODE = {{ DEFAULT_CODE|safe }};
-  const initialLang = "{{ active_language }}";
-    var editor = ace.edit("editor"); 
-    editor.setTheme("ace/theme/monokai"); 
-    editor.session.setMode("ace/mode/{{ active_language }}"); 
-    editor.setOptions({ fontSize: "16px", showPrintMargin: false }); 
-    // Copy code to hidden input on form submit 
-    document.querySelector("form").addEventListener("submit", function(){ 
-        document.getElementById("code_input").value = editor.getValue(); 
-    });
-         document.getElementById("language").addEventListener("change", function() { 
-            const lang = this.value;
-             editor.setValue(DEFAULT_CODE[lang] || "", 1); // 1 = move cursor to start 
-             editor.session.setMode("ace/mode/" + lang); // updates syntax highlighting
-              });
-</script> {% endcomment %}
+
 
 <script>
   // Make sure DEFAULT_CODE is available from Django context
