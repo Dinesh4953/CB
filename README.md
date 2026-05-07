@@ -1,63 +1,107 @@
 Campus Bridge – AI Integrated Learning Management System
-Overview
+📌 Overview
 
-Campus Bridge is an AI-powered Learning Management System (LMS) developed to enhance digital learning and coding skill development for students and teachers. The platform provides course management, assignments, quizzes, attendance tracking, and AI-based tutoring support in a single system.
+Campus Bridge is an AI-powered Learning Management System (LMS) designed to support students in coding practice, academic learning, and career development. The platform combines AI assistance, coding resources, engineering course materials, and user profile management into a single web application.
 
-Features
-Student and Teacher Authentication
-Course Management System
-Assignment Upload and Submission
-Quiz and Assessment Modules
-Attendance Tracking
-AI Tutor Integration using Gemini API
-Coding Practice Modules
-Responsive Dashboard UI
-Secure Database Management
-Technologies Used
-Backend: Python, Django
-Frontend: HTML, CSS, Bootstrap, JavaScript
-Database: MySQL / SQLite
-AI Integration: Gemini API
-Tools: Git, VS Code
-Project Structure
+🚀 Features
+🔐 Authentication System
+User Registration and Login
+Secure Authentication
+Session Management
+🏠 Dashboard
+Interactive Home Page
+Personalized Welcome Interface
+Navigation Bar with Profile and Logout Options
+Search Functionality
+💻 Coding Learning Module
+Programming Language Learning Resources
+Coding Practice Problems
+Multi-Code Compiler Support
+Problem Solving Practice
+🎓 Academic Learning
+Engineering Course Materials
+Academic Notes and Resources
+Learning Support Platform
+🤖 AI Integration
+AI Chat Assistant
+AI-based Learning Support
+Prompt-based Query Assistance
+👤 User Profile Management
+User Profile Page
+Bio Editing Feature
+Email and Username Display
+Codeforces Profile Integration
+Solved Problem Tracking
+📄 Resume Builder
+CV/Resume Creation Feature
+User-friendly Resume Generation
+🛠️ Technologies Used
+Frontend
+HTML
+CSS
+Bootstrap
+JavaScript
+Backend
+Python
+Django
+Database
+SQLite / MySQL
+AI & APIs
+Gemini API
+AI Prompt Engineering
+Tools
+Git
+GitHub
+VS Code
+📂 Project Structure
 CampusBridge/
-│── app/
+│── academics/
+│── coding/
+│── users/
 │── templates/
 │── static/
 │── media/
 │── db.sqlite3
 │── manage.py
 │── requirements.txt
-Installation
-1. Clone the Repository
-git clone https://github.com/your-username/campus-bridge.git
+⚙️ Installation Guide
+1️⃣ Clone Repository
+git clone https://github.com/Dinesh4953/CB.git
 cd campus-bridge
-2. Create Virtual Environment
+2️⃣ Create Virtual Environment
 python -m venv venv
-3. Activate Virtual Environment
+3️⃣ Activate Environment
 Windows
 venv\Scripts\activate
 Linux/Mac
 source venv/bin/activate
-4. Install Dependencies
+4️⃣ Install Requirements
 pip install -r requirements.txt
-5. Run Migrations
+5️⃣ Run Database Migrations
 python manage.py migrate
-6. Start the Server
+6️⃣ Start Development Server
 python manage.py runserver
-Usage
-Register/Login as Student or Teacher
-Access dashboard features
-Upload and manage course materials
-Attempt quizzes and assignments
-Use AI tutor for learning assistance
-Future Enhancements
-Video conferencing integration
-AI-based performance analytics
-Mobile application support
-Real-time notifications
-Online code compiler integration
-Author
+🌐 Demo
+
+Demo Link:
+[Campus Bridge Live Demo](https://cb-keoh.onrender.com)
+
+📸 Screenshots
+Home Dashboard
+Personalized dashboard with learning and coding modules
+Profile Page
+User profile management with coding statistics and bio editing
+AI Learning Support
+AI-powered educational assistance and query solving
+🔮 Future Enhancements
+Real-time Chat System
+Online Video Lectures
+AI-based Student Performance Analysis
+Leaderboard System
+Mobile Application Support
+Dark Mode UI
+Real-time Notifications
+👨‍💻 Author
 
 Dinesh Kumar Miriyala
 AI & ML Student | Django Developer | ML Enthusiast
