@@ -1,0 +1,84 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}PDF to Image - Campus Bridge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>🖼️ Convert PDF to Images</h3>
+            </div>
+            <div class="card-body">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.pdf_file.label }}</label>
+                        <div class="file-input-wrapper">
+                            {{ form.pdf_file }}
+                            <label for="{{ form.pdf_file.id_for_label }}" class="file-input-label">
+                                <div>📁 Click to select PDF</div>
+                                <small>Each page becomes a separate image</small>
+                            </label>
+                        </div>
+                        {% if form.pdf_file.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.pdf_file.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.format.label }}</label>
+                        <div>
+                            {% for radio in form.format %}
+
+    <div class="form-check">
+
+        {{ radio.tag }}
+
+        <label class="form-check-label"
+               for="{{ radio.id_for_label }}">
+
+            {{ radio.choice_label }}
+
+        </label>
+
+    </div>
+
+{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.dpi.id_for_label }}" class="form-label">{{ form.dpi.label }}</label>
+                        {{ form.dpi }}
+                        <small class="form-text text-muted">Higher DPI = Better quality (100-300)</small>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">🔄 Convert to Images</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header"><h5>ℹ️ Features</h5></div>
+            <div class="card-body">
+                <ul>
+                    <li>Converts each page to separate image</li>
+                    <li>Choose PNG, JPG, or BMP format</li>
+                    <li>Adjustable DPI for quality control</li>
+                    <li>Multi-page PDFs returned as ZIP</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

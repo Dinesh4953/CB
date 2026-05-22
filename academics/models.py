@@ -88,43 +88,177 @@ class Question(models.Model):
     ######## CODING LANGUAGES  ##########
     # models.py
 
+import re
+
+
 class PythonTopic(models.Model):
+
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         related_name='topics'
     )
+
     title = models.CharField(max_length=255, blank=True, null=True)
-    content = models.TextField(help_text="Use basic HTML or rich text for formatting.", blank=True, null=True)
+
+    content = models.TextField(
+        help_text="Use basic HTML or rich text for formatting.",
+        blank=True,
+        null=True
+    )
+
     example_code = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='topics/', blank=True, null=True)
-    video_url = models.URLField(blank=True, null=True, help_text="Optional embedded video URL (YouTube etc.)")
+
+    image = models.ImageField(
+        upload_to='topics/',
+        blank=True,
+        null=True
+    )
+
+    video_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Optional embedded video URL (YouTube etc.)"
+    )
+
     show_compiler = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title or ""
 
 
+
+
+
+    def youtube_id(self):
+
+        if not self.video_url:
+            return None
+
+        patterns = [
+
+            r"youtube\.com/watch\?v=([^&]+)",
+            r"youtu\.be/([^?&]+)",
+            r"youtube\.com/embed/([^?&]+)",
+            r"youtube\.com/shorts/([^?&]+)"
+
+        ]
+
+        for pattern in patterns:
+
+            match = re.search(pattern, self.video_url)
+
+            if match:
+                return match.group(1)
+
+        return None
+
+    @property
+    def thumbnail_url(self):
+
+        video_id = self.youtube_id()
+
+        if video_id:
+            return f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+
+        return ""
+
+
+    @property
+    def embed_url(self):
+
+        video_id = self.youtube_id()
+
+        if video_id:
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        return ""
+
+
+# class LectureVideo(models.Model):
+#     course = models.ForeignKey(
+#         Course,
+#         on_delete=models.CASCADE,
+#         related_name='videos'
+#     )
+#     title = models.CharField(max_length=200)
+#     youtube_url = models.URLField(help_text="Paste full YouTube URL (e.g. https://youtu.be/xyz)")
+
+#     def youtube_id(self):
+#         import re
+#         match = re.search(r'(?:v=|youtu\.be/)([^&]+)', self.youtube_url)
+#         return match.group(1) if match else None
+
+#     def thumbnail_url(self):
+#         vid = self.youtube_id()
+#         return f"https://img.youtube.com/vi/{vid}/hqdefault.jpg" if vid else ""
+
+#     def __str__(self):
+#         return f"{self.title} ({self.course.name})"
+
 class LectureVideo(models.Model):
+
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         related_name='videos'
     )
+
     title = models.CharField(max_length=200)
-    youtube_url = models.URLField(help_text="Paste full YouTube URL (e.g. https://youtu.be/xyz)")
+
+    youtube_url = models.URLField(
+        help_text="Paste full YouTube URL"
+    )
+
+    
 
     def youtube_id(self):
-        import re
-        match = re.search(r'(?:v=|youtu\.be/)([^&]+)', self.youtube_url)
-        return match.group(1) if match else None
 
+        import re
+
+        regex_patterns = [
+
+            r"(?:v=|\/watch\?v=)([^&]+)",
+            r"youtu\.be\/([^?&]+)",
+            r"embed\/([^?&]+)",
+            r"shorts\/([^?&]+)"
+
+        ]
+
+        for pattern in regex_patterns:
+
+            match = re.search(pattern, self.youtube_url)
+
+            if match:
+                return match.group(1)
+
+        return None
+
+
+    @property
     def thumbnail_url(self):
-        vid = self.youtube_id()
-        return f"https://img.youtube.com/vi/{vid}/hqdefault.jpg" if vid else ""
+
+        video_id = self.youtube_id()
+
+        if video_id:
+            return f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+
+        return ""
+
+
+    @property
+    def embed_url(self):
+
+        video_id = self.youtube_id()
+
+        if video_id:
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        return ""
 
     def __str__(self):
-        return f"{self.title} ({self.course.name})"
+
+        return self.title
 
 
 class CourseFile(models.Model):

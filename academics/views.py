@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
-from .models import Course, Subject, Department
+from prompt_toolkit import prompt
+from .models import Course, Semester, Subject, Department
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Course, PythonTopic, LectureVideo, CourseFile, Question
@@ -24,13 +25,27 @@ class CourseDetailView(DetailView):
     context_object_name = 'course'
 
     def get_context_data(self, **kwargs):
-#2️⃣ Django sends the captured parameter to the view
-# When you click a course link:
-# <a href="{% url 'course-detail' course.id %}">{{ course.name }}</a>
-# Django calls CourseDetailView and sends:
-# {'pk': 3}   # if course id = 3
-# This {'pk': 3} is automatically sent as a keyword argument to your view method, like get_context_data.
+
+
+# Because it is a DetailView, Django automatically does:
+# self.object = Course.objects.get(pk=3)
+
+# This happens BEFORE your get_context_data().
+# This is why:
+
+# course = self.object
+
+
+
+# If Django passes URL parameters → the function must accept them
+# If not → no kwargs needed
+
+
+# User clicks → Django finds URL → Django fetches course → self.object is ready → I use it to fetch videos, files, topics → page is rendered
+
         context = super().get_context_data(**kwargs)
+        # “Pass the URL parameters (pk=3) to Django’s parent class so it can do its job.”
+        # self.object = Course.objects.get(pk=3),  The above code line is reason for this internal happening. 
         course = self.object
         topics_ = PythonTopic.objects.filter(course=course).order_by('id')
         paginator = Paginator(topics_, 20)
@@ -74,6 +89,46 @@ def branch_subject_view(request):
     if selected_id:
         selected_department = Department.objects.get(id=selected_id)
         semesters = selected_department.semester_set.prefetch_related('subject_set')
+        #<model>_set is auto-created by Django for ForeignKey relations
+        
+        # selected_department.semester_set is equivalent to:
+        #     Semester.objects.filter(department=selected_department)
+
+        
+        
+#         Example from YOUR models
+
+# 🔹 Subject → Semester (ForeignKey)
+# subjects = Subject.objects.select_related('semester')
+# Because:
+# Each Subject has ONE Semester
+
+
+# 🔹 Semester → Subject (reverse FK)
+# semesters = Semester.objects.prefetch_related('subject_set')
+# Because:
+# Each Semester has MANY Subjects
+
+##Forward FK → select_related
+# Reverse FK / many → prefetch_related
+
+
+
+# Case 1️⃣: WITHOUT prefetch_related
+# semesters = selected_department.semester_set.all()
+
+# What Django does:
+
+# 1 query → fetch all semesters
+# 1 query per semester → fetch its subjects
+# If you have 5 semesters:
+# 1 (semesters) + 5 (subjects) = 6 queries
+
+
+# This is called the N+1 query problem.
+
+#  Correct result
+#  Slower as data grows
 
     return render(request, 'academics/branch_subjects.html', {
         'departments': departments,
@@ -82,61 +137,395 @@ def branch_subject_view(request):
     })
 
 
+# from django.shortcuts import render
+# from django.http import JsonResponse
+# from django.views.decorators.csrf import csrf_exempt
+# from groq import Groq
+# import os
+
+# # Initialize Groq client once
+# client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# @csrf_exempt
+# def ask_gemini(request):   # keep SAME name (important)
+
+#     #  PAGE LOAD
+#     if request.method == "GET":
+#         return render(request, "academics/ai.html")
+
+#     # AI CHAT
+#     if request.method == "POST":
+#         try:
+#             prompt = request.POST.get("prompt", "").strip()
+
+#             if not prompt:
+#                 return JsonResponse({"response": "Please type something."})
+
+#             #  GROQ AI RESPONSE
+#             response = client.chat.completions.create(
+#                 model="llama-3.1-8b-instant",
+#                 messages=[
+#                     {
+#                         "role": "system",
+#                         "content": "You are AI-Tutor, a helpful programming tutor. Explain clearly with examples when needed."
+#                     },
+#                     {
+#                         "role": "user",
+#                         "content": prompt
+#                     }
+#                 ],
+#                 temperature=0.3,
+#                 max_tokens=700
+#             )
+
+#             ai_text = response.choices[0].message.content
+
+#             return JsonResponse({
+#                 "response": ai_text
+#             })
+
+#         except Exception as e:
+#             print("GROQ ERROR:", e)
+#             return JsonResponse(
+#                 {"response": "⚠️ AI service error"},
+#                 status=500
+#             )
+
+#     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from groq import Groq
+
+from langchain_community.chat_models import ChatOllama
+
+from langchain_core.messages import HumanMessage
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OllamaEmbeddings
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from langchain.chains import RetrievalQA
+
+from tavily import TavilyClient
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+os.environ["TAVILY_API_KEY"] = os.getenv('TAVILY_API_KEY')
+
+
+import tempfile
 import os
 
-# Initialize Groq client once
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# =========================
+# OLLAMA MODEL
+# =========================
+
+model = ChatOllama(
+    model="gemma3:1b",
+    temperature=0.3
+)
+
+
+# =========================
+# WEB SEARCH
+# =========================
+
+tavily = TavilyClient(
+    api_key=os.getenv("TAVILY_API_KEY")
+)
+
+
+# =========================
+# MEMORY STORE
+# =========================
+
+store = {}
+
+# USER PDF VECTOR STORE
+user_vectors = {}
+
+
+# =========================
+# GET USER MEMORY
+# =========================
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+
+    return store[session_id]
+
+
+# =========================
+# MEMORY WRAPPER
+# =========================
+
+with_message_history = RunnableWithMessageHistory(
+    model,
+    get_session_history
+)
+
+
+# =========================
+# PDF VECTOR CREATION
+# =========================
+
+def create_pdf_vectorstore(pdf_file, session_id):
+
+    temp_dir = tempfile.mkdtemp()
+
+    temp_path = os.path.join(temp_dir, pdf_file.name)
+
+    with open(temp_path, "wb+") as f:
+
+        for chunk in pdf_file.chunks():
+            f.write(chunk)
+
+    loader = PyPDFLoader(temp_path)
+
+    docs = loader.load()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200
+    )
+
+    split_docs = splitter.split_documents(docs)
+
+    embeddings = OllamaEmbeddings(
+        model="nomic-embed-text"
+    )
+
+    vectorstore = FAISS.from_documents(
+        split_docs,
+        embeddings
+    )
+
+    user_vectors[session_id] = vectorstore
+
+
+# =========================
+# MAIN CHAT VIEW
+# =========================
 
 @csrf_exempt
-def ask_gemini(request):   # ⬅ keep SAME name (important)
+def ask_gemini(request):
 
-    # ✅ PAGE LOAD
+    # PAGE LOAD
     if request.method == "GET":
         return render(request, "academics/ai.html")
 
-    # ✅ AI CHAT
-    if request.method == "POST":
+
+    # =========================
+    # USER SESSION
+    # =========================
+
+    if request.user.is_authenticated:
+
+        session_id = f"user_{request.user.id}"
+
+    else:
+
+        session_id = request.session.session_key
+
+        if not session_id:
+            request.session.create()
+            session_id = request.session.session_key
+
+
+    # =========================
+    # PDF UPLOAD
+    # =========================
+
+    if request.method == "POST" and request.FILES.get("pdf"):
+
         try:
-            prompt = request.POST.get("prompt", "").strip()
 
-            if not prompt:
-                return JsonResponse({"response": "Please type something."})
+            pdf_file = request.FILES["pdf"]
 
-            # 🔥 GROQ AI RESPONSE
-            response = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are AI-Tutor, a helpful programming tutor. Explain clearly with examples when needed."
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                temperature=0.3,
-                max_tokens=700
+            create_pdf_vectorstore(
+                pdf_file,
+                session_id
             )
 
-            ai_text = response.choices[0].message.content
+            return JsonResponse({
+                "response": "✅ PDF uploaded successfully. You can now chat with the document."
+            })
+
+        except Exception as e:
+
+            print("PDF ERROR:", e)
+
+            return JsonResponse({
+                "response": "⚠️ PDF processing failed"
+            })
+
+
+    # =========================
+    # NORMAL CHAT
+    # =========================
+
+    if request.method == "POST":
+
+        try:
+
+            prompt = request.POST.get(
+                "prompt",
+                ""
+            ).strip()
+
+            if not prompt:
+
+                return JsonResponse({
+                    "response": "Please type something."
+                })
+
+
+            config = {
+                "configurable": {
+                    "session_id": session_id
+                }
+            }
+
+
+            # =========================
+            # WEB SEARCH MODE
+            # =========================
+
+            web_keywords = [
+                "latest",
+                "current",
+                "today",
+                "news",
+                "2026",
+                "price",
+                "cm",
+                "pm",
+                "president"
+            ]
+
+
+            use_web = any(
+                word in prompt.lower()
+                for word in web_keywords
+            )
+
+
+            # =========================
+# PDF RAG MODE
+# =========================
+
+            if session_id in user_vectors:
+
+                retriever = user_vectors[
+                    session_id
+                ].as_retriever(search_kwargs={"k": 4})
+
+                docs = retriever.get_relevant_documents(prompt)
+
+                context = "\n\n".join(
+                    [doc.page_content for doc in docs]
+                )
+
+                final_prompt = f"""
+            You are an AI assistant.
+
+            Answer ONLY using the PDF content below.
+
+            If answer is not present in PDF,
+            say:
+            "I could not find that in the uploaded PDF."
+
+            PDF Content:
+            {context}
+
+            User Question:
+            {prompt}
+            """
+
+            else:
+
+                final_prompt = prompt
+
+
+            # =========================
+            # WEB SEARCH
+            # =========================
+
+            if use_web:
+
+                search_result = tavily.search(
+                    query=prompt,
+                    max_results=3
+                )
+
+                web_context = ""
+
+                for result in search_result["results"]:
+
+                    web_context += (
+                        result["content"] + "\n"
+                    )
+
+                final_prompt += f"""
+
+                Latest web information:
+                {web_context}
+
+                Use latest information if relevant.
+                """
+
+
+            # =========================
+            # FINAL AI RESPONSE
+            # =========================
+
+            response = with_message_history.invoke(
+                [
+                    HumanMessage(
+                        content=final_prompt
+                    )
+                ],
+                config=config
+            )
+
+            ai_text = response.content
 
             return JsonResponse({
                 "response": ai_text
             })
 
+
         except Exception as e:
-            print("GROQ ERROR:", e)
+
+            print("OLLAMA ERROR:", e)
+
             return JsonResponse(
-                {"response": "⚠️ AI service error"},
+                {
+                    "response": "⚠️ AI service error"
+                },
                 status=500
             )
 
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    return JsonResponse(
+        {
+            "error": "Method not allowed"
+        },
+        status=405
+    )
 
 
 

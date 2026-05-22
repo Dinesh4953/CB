@@ -114,13 +114,14 @@ class Command(BaseCommand):
                 diff = "H"
 
             question = PracticeQuestions.objects.create(
-                title=title,
-                question_text=description,
-                difficulty=diff,
-                solution="N/A",
-                contest_id=contest_id,
-                index=index
-            )
+    question_number=PracticeQuestions.objects.count() + 1,
+    title=title,
+    question_text=description,
+    difficulty=diff,
+    solution="N/A",
+    contest_id=contest_id,
+    index=index
+)
 
             tags = prob.get("tags", [])
             tag_objs = []

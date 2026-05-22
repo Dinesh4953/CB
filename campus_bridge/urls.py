@@ -33,6 +33,7 @@ urlpatterns = [
     path('practice/', include('practice.urls')),
      path('solved/', views.solved_problems_view, name='solved_problems'),
     path('pdf/', include('cv.urls')),
-    path('',starting_page, name='starting_page' )
+    path('',starting_page, name='starting_page' ),
+     path("tools/", include("tools.urls")),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

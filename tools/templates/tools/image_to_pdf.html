@@ -1,0 +1,76 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Image to PDF - Campus Bridge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>🖼️ Convert Images to PDF</h3>
+            </div>
+            <div class="card-body">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.image_files.label }}</label>
+                        <div>
+    {{ form.image_files }}
+
+    <small class="text-muted">
+        Supports JPG, PNG, GIF, BMP (Multiple files supported)
+    </small>
+</div>
+                        {% if form.image_files.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.image_files.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.orientation.label }}</label>
+                        <div>
+                            {% for radio in form.orientation %}
+                                <div class="form-check">
+
+                                    {{ radio.tag }}
+
+                                    <label class="form-check-label"
+                                        for="{{ radio.id_for_label }}">
+
+                                        {{ radio.choice_label }}
+
+                                    </label>
+
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">🔄 Convert to PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header"><h5>ℹ️ Features</h5></div>
+            <div class="card-body">
+                <ul>
+                    <li>Converts multiple images to single PDF</li>
+                    <li>Supports JPG, PNG, GIF, BMP</li>
+                    <li>Choose portrait or landscape orientation</li>
+                    <li>Maintains image quality</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 # academics/urls.py
 
-from django.urls import path
+from django.urls import path, include
 from .views import CourseListView, CourseDetailView, SubjectList, branch_subject_view, ask_gemini
 from academics import views
 
@@ -16,5 +16,6 @@ urlpatterns = [
     path("whiteboard/", views.white_board, name="whiteboard"),
     # path("languages/", views.languages, name="languages"),
     # path("languages/python", views.python_language, name="python_language")
-    
+   
 ]
+

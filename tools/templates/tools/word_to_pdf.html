@@ -1,0 +1,56 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Word to PDF - Campus Bridge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>📑 Convert Word to PDF</h3>
+            </div>
+            <div class="card-body">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.word_file.label }}</label>
+                        <div class="file-input-wrapper">
+                            {{ form.word_file }}
+                            <label for="{{ form.word_file.id_for_label }}" class="file-input-label">
+                                <div>📁 Click to select DOCX or DOC file</div>
+                                <small>Supports .docx and .doc formats</small>
+                            </label>
+                        </div>
+                        {% if form.word_file.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.word_file.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">🔄 Convert to PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header"><h5>ℹ️ Features</h5></div>
+            <div class="card-body">
+                <ul>
+                    <li>Converts DOCX and DOC files</li>
+                    <li>Preserves text formatting</li>
+                    <li>Includes tables and images</li>
+                    <li>High-quality PDF output</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

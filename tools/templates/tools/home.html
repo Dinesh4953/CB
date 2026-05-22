@@ -1,0 +1,106 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Tools - Campus Bridge{% endblock %}
+
+{% block content %}
+
+<div class="row mb-5">
+    <div class="col-lg-8 offset-lg-2">
+
+        <div class="text-center text-white mb-5">
+            <h1 class="display-4 fw-bold mb-2">
+                File Conversion Tools
+            </h1>
+
+            <p class="lead">
+                Convert between different file formats instantly
+            </p>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="row">
+
+    {% for tool in tools %}
+
+    <div class="col-lg-6 col-md-12 mb-4">
+
+        <div class="card h-100">
+
+            <div class="card-body text-center">
+
+                <div class="icon-large">
+                    {{ tool.icon }}
+                </div>
+
+                <h5 class="card-title">
+                    {{ tool.name }}
+                </h5>
+
+                <p class="card-text text-muted-custom">
+                    {{ tool.desc }}
+                </p>
+
+                <a href="{% url tool.url %}"
+                   class="btn btn-primary btn-lg mt-3">
+
+                    Use Tool →
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="row mt-5">
+
+    <div class="col-lg-8 offset-lg-2">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h5>✨ Features</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <ul>
+                            <li>✓ Secure & Private</li>
+                            <li>✓ No Registration Required</li>
+                            <li>✓ Fast Processing</li>
+                            <li>✓ High Quality Output</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-6">
+                        <ul>
+                            <li>✓ Multiple Format Support</li>
+                            <li>✓ Batch Processing Available</li>
+                            <li>✓ OCR Technology</li>
+                            <li>✓ Free to Use</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

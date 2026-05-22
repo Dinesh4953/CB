@@ -34,7 +34,37 @@
       <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search_query }}">
     </div>
 
-    <div class="col-md-2 d-flex align-items-end">
+    <div class="col-md-2">
+  <label for="per_page" class="form-label">
+    Problems Per Page
+  </label>
+
+  <select class="form-select" name="per_page" id="per_page">
+
+    <option value="5"
+      {% if per_page == 5 %}selected{% endif %}>
+      5
+    </option>
+
+    <option value="10"
+      {% if per_page == 10 %}selected{% endif %}>
+      10
+    </option>
+
+    <option value="20"
+      {% if per_page == 20 %}selected{% endif %}>
+      20
+    </option>
+
+    <option value="50"
+      {% if per_page == 50 %}selected{% endif %}>
+      50
+    </option>
+
+  </select>
+</div>
+
+    <div class="col-md-12 d-flex justify-content-end">
       <button type="submit" class="btn btn-primary w-100">Apply</button>
     </div>
   </form>

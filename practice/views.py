@@ -31,7 +31,14 @@ def problem_list(request):
         ('H', 'Hard'),
     ]
     
-    paginator = Paginator(questions ,5)
+    per_page = request.GET.get('per_page', 5)
+
+    try:
+        per_page = int(per_page)
+    except:
+        per_page = 5
+
+    paginator = Paginator(questions, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -63,6 +70,7 @@ def problem_list(request):
         'search_query': search_query,
         'query_string': query_string,
         'solved_ids': solved_ids,
+        'per_page': per_page,
     })
 
 

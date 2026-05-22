@@ -36,6 +36,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "tools",
     "cv",
     "academics.apps.AcademicsConfig",
     "users.apps.UsersConfig",

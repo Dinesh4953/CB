@@ -27,18 +27,29 @@
       {% endif %}
 
       {% if topic.video_url %}
-        <div class="my-5">
-          <h5>🎥 Video Explanation:</h5>
-          <div class="ratio ratio-16x9" style="max-width: 960px; margin: auto;">
-            <iframe
-              class="rounded border"
-              src="https://www.youtube.com/embed/{{ topic.video_url|slice:'-11:' }}"
-              allowfullscreen
-              style="min-height: 480px;">
-            </iframe>
-          </div>
-        </div>
-      {% endif %}
+<div class="my-5">
+
+    <h4 class="fw-bold mb-4">
+        🎥 Video Explanation
+    </h4>
+
+    
+
+<a href="{{ topic.video_url }}" target="_blank">
+
+    <img
+        src="{{ topic.thumbnail_url }}"
+        class="img-fluid rounded shadow"
+        style="max-width: 850px; width:100%;"
+    >
+
+</a>
+
+    <!-- Fallback Button -->
+   
+
+</div>
+{% endif %}
 
       {% if topic.show_compiler %}
         <div class="my-4">
@@ -99,7 +110,7 @@
   {% csrf_token %}
   {% for q in questions_page %}
     <div class="question-card mb-4 p-4 shadow rounded question-block" {% if not forloop.first %}style="display:none"{% endif %}>
-      <p><strong>{{ forloop.counter }}. {{ q.text }}</strong></p>
+      <p><strong>{{ forloop.counter }}. {{ q.text|safe }}</strong></p>
 
       <div class="option-group mt-3">
         <div class="option-box form-check">
@@ -136,6 +147,11 @@
 <h1 class="final_one text-center mt-4"></h1>
 
 <style>
+
+img:hover{
+    transform: scale(1.01);
+}
+
 .option-box input[type="radio"] {
     display: none; /* hide actual radio button */
 }
@@ -163,40 +179,7 @@
 </style>
 
 
-<!-- Pagination Controls -->
-<div class="text-center mt-5">
-  <nav aria-label="Topic pagination">
-    <ul class="pagination justify-content-center">
-      {% if topics.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ topics.previous_page_number }}">Previous</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled">
-          <span class="page-link">Previous</span>
-        </li>
-      {% endif %}
 
-      {% for num in topics.paginator.page_range %}
-        {% if topics.number == num %}
-          <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-        {% elif num > topics.number|add:'-3' and num < topics.number|add:'3' %}
-          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-        {% endif %}
-      {% endfor %}
-
-      {% if topics.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ topics.next_page_number }}">Next</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled">
-          <span class="page-link">Next</span>
-        </li>
-      {% endif %}
-    </ul>
-  </nav>
-</div>
 
 <script>
 $(document).ready(function(){
