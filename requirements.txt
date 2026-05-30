@@ -23,6 +23,7 @@ python-dotenv
 beautifulsoup4 
 selenium 
 webdriver-manager
+pypdf
 
 langchain==0.2.16
 langchain-community==0.2.16
