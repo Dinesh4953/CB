@@ -202,7 +202,16 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from langchain_community.chat_models import ChatOllama
+# Compatibility patch for langchain_core dependency error in some python environments
+import sys
+try:
+    import langchain_core.pydantic_v1
+except ModuleNotFoundError:
+    try:
+        import pydantic.v1
+        sys.modules['langchain_core.pydantic_v1'] = pydantic.v1
+    except ImportError:
+        pass
 
 from langchain_core.messages import HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -211,11 +220,8 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import OllamaEmbeddings
-
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-from langchain.chains import RetrievalQA
 
 from tavily import TavilyClient
 
@@ -224,18 +230,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 os.environ["TAVILY_API_KEY"] = os.getenv('TAVILY_API_KEY')
-
+os.environ["GROQ_API_KEY"] = os.getenv('GROQ_API_KEY')
+os.environ["HUGGINGFACE_ACCESS_TOKEN"] = os.getenv('HUGGINGFACE_ACCESS_TOKEN')
 
 import tempfile
 import os
 
 
 # =========================
-# OLLAMA MODEL
+# GROQ CLOUD MODEL
 # =========================
 
-model = ChatOllama(
-    model="qwen2.5:7b",
+from langchain_openai import ChatOpenAI
+model = ChatOpenAI(
+    openai_api_base="https://api.groq.com/openai/v1",
+    openai_api_key=os.getenv("GROQ_API_KEY"),
+    model_name="llama-3.1-8b-instant",
     temperature=0.3
 )
 
@@ -307,8 +317,11 @@ def create_pdf_vectorstore(pdf_file, session_id):
 
     split_docs = splitter.split_documents(docs)
 
-    embeddings = OllamaEmbeddings(
-        model="nomic-embed-text"
+    if not split_docs:
+        raise ValueError("The uploaded PDF does not contain any extractable text. Please ensure it is a text-based PDF and not a scanned image.")
+
+    embeddings = HuggingFaceEmbeddings(
+        model_name="all-MiniLM-L6-v2"
     )
 
     vectorstore = FAISS.from_documents(
@@ -373,7 +386,7 @@ def ask_gemini(request):
             print("PDF ERROR:", e)
 
             return JsonResponse({
-                "response": "⚠️ PDF processing failed"
+                "response": f"⚠️ PDF processing failed: {str(e)}"
             })
 
 
@@ -437,7 +450,7 @@ def ask_gemini(request):
                     session_id
                 ].as_retriever(search_kwargs={"k": 4})
 
-                docs = retriever.get_relevant_documents(prompt)
+                docs = retriever.invoke(prompt)
 
                 context = "\n\n".join(
                     [doc.page_content for doc in docs]
@@ -493,23 +506,28 @@ def ask_gemini(request):
 
 
             # =========================
-            # FINAL AI RESPONSE
+            # FINAL AI RESPONSE (STREAMING)
             # =========================
 
-            response = with_message_history.invoke(
-                [
-                    HumanMessage(
-                        content=final_prompt
-                    )
-                ],
-                config=config
-            )
+            from django.http import StreamingHttpResponse
 
-            ai_text = response.content
+            def event_stream():
+                try:
+                    for chunk in with_message_history.stream(
+                        [
+                            HumanMessage(
+                                content=final_prompt
+                            )
+                        ],
+                        config=config
+                    ):
+                        if chunk.content:
+                            yield chunk.content
+                except Exception as stream_err:
+                    print("STREAM ERROR:", stream_err)
+                    yield "⚠️ Error during generation stream."
 
-            return JsonResponse({
-                "response": ai_text
-            })
+            return StreamingHttpResponse(event_stream(), content_type="text/plain")
 
 
         except Exception as e:

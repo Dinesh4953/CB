@@ -449,6 +449,67 @@ function copyCode(id) {
 }
 
 
+function updateAiMessage(messageElement, text) {
+  let formatted = "";
+  let lastIndex = 0;
+
+  const regex = /```(\w+)?\n([\s\S]*?)```/g;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    formatted += escapeHtml(
+      text.slice(lastIndex, match.index)
+    ).replace(/\n/g, "<br>");
+
+    const lang = match[1] || "python";
+    const code = escapeHtml(match[2]);
+    const uniqueId = "code-" + Math.random().toString(36).substring(2, 9);
+
+    formatted += `
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('${uniqueId}')">Copy</button>
+      <pre class="language-${lang}"><code id="${uniqueId}" class="language-${lang}">${code}</code></pre>
+    </div>
+    `;
+
+    lastIndex = regex.lastIndex;
+  }
+
+  // Check if there is an unclosed code block at the end (for active streaming)
+  const openCodeBlockIndex = text.indexOf("```", lastIndex);
+  if (openCodeBlockIndex !== -1 && openCodeBlockIndex === text.lastIndexOf("```")) {
+    formatted += escapeHtml(
+      text.slice(lastIndex, openCodeBlockIndex)
+    ).replace(/\n/g, "<br>");
+
+    const blockContent = text.slice(openCodeBlockIndex + 3);
+    const firstNewLine = blockContent.indexOf("\n");
+    let lang = "python";
+    let code = blockContent;
+
+    if (firstNewLine !== -1) {
+      lang = blockContent.slice(0, firstNewLine).trim() || "python";
+      code = blockContent.slice(firstNewLine + 1);
+    }
+
+    const uniqueId = "code-" + Math.random().toString(36).substring(2, 9);
+    formatted += `
+    <div class="code-container">
+      <button class="copy-btn" onclick="copyCode('${uniqueId}')">Copy</button>
+      <pre class="language-${lang}"><code id="${uniqueId}" class="language-${lang}">${escapeHtml(code)}</code></pre>
+    </div>
+    `;
+  } else {
+    formatted += escapeHtml(
+      text.slice(lastIndex)
+    ).replace(/\n/g, "<br>");
+  }
+
+  messageElement.html(formatted);
+  Prism.highlightAllUnder(messageElement[0]);
+  scrollBottom();
+}
+
 
 function showTyping() {
 
@@ -475,8 +536,7 @@ function removeTyping() {
 }
 
 
-
-$('#chat-form').on('submit', function(e) {
+$('#chat-form').on('submit', async function(e) {
 
   e.preventDefault();
 
@@ -491,38 +551,48 @@ $('#chat-form').on('submit', function(e) {
 
   showTyping();
 
-  $.ajax({
+  try {
+    const response = await fetch('{% url "ask_gemini" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+      },
+      body: new URLSearchParams({
+        'prompt': prompt
+      })
+    });
 
-    type: 'POST',
+    removeTyping();
 
-    url: '{% url "ask_gemini" %}',
-
-    data: {
-
-      prompt: prompt,
-
-      csrfmiddlewaretoken:
-      $('input[name=csrfmiddlewaretoken]').val()
-
-    },
-
-    success: function(data) {
-
-      removeTyping();
-
-      appendMessage(data.response, 'ai');
-    },
-
-    error: function() {
-
-      removeTyping();
-
-      appendMessage(
-        "⚠️ Something went wrong.",
-        'ai'
-      );
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
     }
-  });
+
+    // Append a new empty AI message box for the incoming stream
+    $('#welcome-text').remove();
+    const messageElement = $('<div></div>')
+      .addClass('chat-message')
+      .addClass('ai-message');
+    chatBox.append(messageElement);
+    scrollBottom();
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let accumulatedText = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      accumulatedText += decoder.decode(value, { stream: true });
+      updateAiMessage(messageElement, accumulatedText);
+    }
+
+  } catch (error) {
+    removeTyping();
+    console.error("Chat error:", error);
+    appendMessage("⚠️ Something went wrong: " + error.message, 'ai');
+  }
 
 });
 

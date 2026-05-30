@@ -45,4 +45,38 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Find all password input fields inside the form
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+    
+    passwordFields.forEach(field => {
+        // Create form-check checkbox wrapper container
+        const toggleContainer = document.createElement('div');
+        toggleContainer.className = 'form-check mt-1 mb-2';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'form-check-input';
+        checkbox.id = 'toggle_' + field.id;
+        
+        const label = document.createElement('label');
+        label.className = 'form-check-label small text-secondary fw-semibold';
+        label.htmlFor = checkbox.id;
+        label.textContent = 'Show Password';
+        
+        checkbox.addEventListener('change', function() {
+            // Toggle input type dynamically
+            field.type = this.checked ? 'text' : 'password';
+        });
+        
+        toggleContainer.appendChild(checkbox);
+        toggleContainer.appendChild(label);
+        
+        // Append right below the password field
+        field.parentNode.appendChild(toggleContainer);
+    });
+});
+</script>
 {% endblock %}

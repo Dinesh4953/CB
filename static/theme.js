@@ -65,9 +65,59 @@ class ThemeManager {
     button.setAttribute('aria-label', 'Toggle light and dark theme');
     button.innerHTML = this.getToggleIcon(this.getCurrentTheme());
 
+    let wasDragged = false;
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+
+    // Draggable logic supporting both Desktop and Mobile
+    const dragStart = (e) => {
+      isDragging = true;
+      wasDragged = false;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      startX = clientX;
+      startY = clientY;
+      const style = window.getComputedStyle(button);
+      initialX = parseInt(style.right, 10) || 25;
+      initialY = parseInt(style.bottom, 10) || 25;
+      button.style.transition = 'none'; // Disable transition smooth animations while dragging
+    };
+
+    const drag = (e) => {
+      if (!isDragging) return;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const dx = startX - clientX;
+      const dy = startY - clientY;
+
+      // Set dragged state if user moves the cursor more than 5px
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        wasDragged = true;
+      }
+
+      button.style.right = `${initialX + dx}px`;
+      button.style.bottom = `${initialY + dy}px`;
+    };
+
+    const dragEnd = () => {
+      isDragging = false;
+      button.style.transition = ''; // Restore standard animations
+    };
+
+    button.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd);
+
+    button.addEventListener('touchstart', dragStart, { passive: true });
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', dragEnd);
+
     button.addEventListener('click', (e) => {
       e.preventDefault();
-      this.toggleTheme();
+      // Only switch theme if the button wasn't dragged around
+      if (!wasDragged) {
+        this.toggleTheme();
+      }
     });
 
     document.body.appendChild(button);
