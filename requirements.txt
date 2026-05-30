@@ -21,7 +21,8 @@ prompt_toolkit
 tavily-python
 python-dotenv
 beautifulsoup4 
-selenium webdriver-manager
+selenium 
+webdriver-manager
 
 langchain==0.2.16
 langchain-community==0.2.16
