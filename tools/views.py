@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import FileResponse
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 import io
 
 from .forms import (
@@ -26,6 +27,7 @@ from .utils.converters import (
 )
 
 
+@login_required
 def index(request):
     """Home page with all tool options"""
 
@@ -94,6 +96,7 @@ def index(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def text_to_pdf(request):
 
     if request.method == 'POST':
@@ -129,6 +132,7 @@ def text_to_pdf(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def pdf_to_text(request):
 
     if request.method == 'POST':
@@ -159,6 +163,7 @@ def pdf_to_text(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def word_to_pdf(request):
 
     if request.method == 'POST':
@@ -189,6 +194,7 @@ def word_to_pdf(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def pdf_to_word(request):
 
     if request.method == 'POST':
@@ -219,6 +225,7 @@ def pdf_to_word(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def image_to_pdf(request):
 
     if request.method == 'POST':
@@ -255,6 +262,7 @@ def image_to_pdf(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def pdf_to_image(request):
 
     if request.method == 'POST':
@@ -316,6 +324,7 @@ def pdf_to_image(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def image_to_text(request):
 
     if request.method == 'POST':
@@ -346,6 +355,7 @@ def image_to_text(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def merge_pdf(request):
 
     if request.method == 'POST':

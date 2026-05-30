@@ -1,79 +1,98 @@
 {% extends 'academics/base.html' %}
+
+{% block title %}{{ problem.title }} - Practice Challenge{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-  <h2>{{ problem.title }}</h2>
+<div class="container py-4">
+  <!-- Back button -->
+  <a href="{% url 'problem_list' %}" class="btn btn-outline-secondary mb-4">
+    &larr; Back to Challenges
+  </a>
 
-  <!-- 🔹 Difficulty Badge -->
-  <p>
-    <span class="badge 
-      {% if problem.difficulty == 'E' %}bg-success
-      {% elif problem.difficulty == 'M' %}bg-warning text-dark
-      {% else %}bg-danger
-      {% endif %}">
-      {% if problem.difficulty == 'E' %}Easy
-      {% elif problem.difficulty == 'M' %}Medium
-      {% else %}Hard
-      {% endif %}
-    </span>
+  <div class="card gradient-border p-4 p-md-5">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+      <div>
+        <h1 class="display-6 fw-bold mb-2" style="border-bottom: none; padding-bottom: 0;">
+          {{ problem.title }}
+        </h1>
+        
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <!-- Difficulty Badge -->
+          <span class="badge px-3 py-2 rounded-pill {% if problem.difficulty == 'E' %}bg-success{% elif problem.difficulty == 'M' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-weight: 700; font-size: 0.8rem;">
+            {% if problem.difficulty == 'E' %}Easy
+            {% elif problem.difficulty == 'M' %}Medium
+            {% else %}Hard
+            {% endif %}
+          </span>
 
-    <!-- ✅ Solved Badge -->
-    {% if user.is_authenticated and problem.id in solved_ids %}
-      <span class="badge bg-info text-dark ms-2">Solved ✅</span>
-    {% endif %}
-  </p>
-
-  <hr>
-
-  <!-- 🧾 Problem Description -->
-  <div class="problem-description">
-    {{ problem.question_text|safe }}
-  </div>
-
-  <hr>
-
-  <!-- 🔖 Tags -->
-  <p><strong>Tags:</strong>
-    {% for tag in problem.tags.all %}
-      <span class="text-success">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-  </p>
-
-  <!-- 🚀 Solve on Codeforces -->
-  <div class="mt-4">
-  {% if request.user.profile.codeforces_handle %}
-    {% if user_handle_valid %}
-      {% if has_solved %}
-        <div class="alert alert-success">
-          ✅ Congratulations! You have already solved this problem on Codeforces.
-          <div class="mt-4">
-            <a href="https://codeforces.com/contest/{{ problem.contest_id }}/my" 
-              target="_blank" class="btn btn-outline-primary">
-              Show My Solution 
-            </a>
-  </div>
+          <!-- Solved Badge -->
+          {% if user.is_authenticated and problem.id in solved_ids %}
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill" style="font-weight: 700; font-size: 0.8rem;">Solved ✓</span>
+          {% endif %}
         </div>
-      {% else %}
-        <a href="https://codeforces.com/contest/{{ problem.contest_id }}/submit/{{ problem.index }}" 
-           target="_blank" class="btn btn-outline-primary">
-          🚀 Solve on Codeforces (as {{ request.user.profile.codeforces_handle }})
-        </a>
-      {% endif %}
-    {% else %}
-      <div class="alert alert-danger">
-        ❌ Your Codeforces handle "{{ request.user.profile.codeforces_handle }}" is invalid.
       </div>
-    {% endif %}
-  {% else %}
-    <div class="alert alert-warning">
-      ⚠️ You have not added a Codeforces handle in your profile.
-      <a href="{% url 'profile' %}">Click here to update</a>.
     </div>
-  {% endif %}
-</div>
 
+    <hr class="my-4" style="border-color: var(--theme-border);">
 
+    <!-- Problem Description -->
+    <div class="problem-description mb-4 p-4 rounded bg-secondary-subtle" style="line-height: 1.8; font-size: 1.05rem;">
+      {{ problem.question_text|safe }}
+    </div>
 
-  <!-- 🔙 Back -->
-  <a href="{% url 'problem_list' %}" class="btn btn-secondary mt-3">← Back to List</a>
+    <!-- Tags -->
+    <div class="mb-4">
+      <strong class="text-secondary">Tags:</strong>
+      <div class="d-inline-flex gap-2 flex-wrap ms-2">
+        {% for tag in problem.tags.all %}
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill" style="font-weight: 600; font-size: 0.8rem;">
+            {{ tag.name }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--theme-border);">
+
+    <!-- Codeforces solvers -->
+    <div class="mt-4">
+      {% if request.user.profile.codeforces_handle %}
+        {% if user_handle_valid %}
+          {% if has_solved %}
+            <div class="alert alert-success d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <span class="fs-5">🎉 <strong>Congratulations!</strong> You have successfully solved this challenge on Codeforces.</span>
+              </div>
+              <a href="https://codeforces.com/contest/{{ problem.contest_id }}/my" 
+                 target="_blank" class="btn btn-success px-4">
+                Show My Solution &nbsp;🏆
+              </a>
+            </div>
+          {% else %}
+            <div class="text-center p-4 rounded bg-secondary-subtle">
+              <p class="lead mb-4 text-secondary">Ready to test your solution? Submit your code directly on Codeforces.</p>
+              <a href="https://codeforces.com/contest/{{ problem.contest_id }}/submit/{{ problem.index }}" 
+                 target="_blank" class="btn btn-primary btn-lg px-5">
+                🚀 Solve on Codeforces (as {{ request.user.profile.codeforces_handle }})
+              </a>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="alert alert-danger">
+            ❌ The Codeforces handle <strong>"{{ request.user.profile.codeforces_handle }}"</strong> linked to your account is invalid. Please verify it under edit profile settings.
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="alert alert-warning d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            ⚠️ <strong>Codeforces integration:</strong> Link your Codeforces handle in your profile setting to track your solving status.
+          </div>
+          <a href="{% url 'profile' %}" class="btn btn-warning text-dark px-4">
+            Link Handle Now
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
 {% endblock %}

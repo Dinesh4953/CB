@@ -4,103 +4,70 @@
 
 {% block content %}
 
-<div class="row mb-5">
+<div class="row mb-4 mt-2">
     <div class="col-lg-8 offset-lg-2">
+        <a href="{% url 'index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Dashboard
+        </a>
 
-        <div class="text-center text-white mb-5">
-            <h1 class="display-4 fw-bold mb-2">
-                File Conversion Tools
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-2" style="border-bottom: none; padding-bottom: 0;">
+                🛠️ File Conversion Tools
             </h1>
-
-            <p class="lead">
-                Convert between different file formats instantly
+            <p class="lead text-secondary">
+                Convert between different document and image formats instantly, securely, and completely free.
             </p>
         </div>
-
     </div>
 </div>
 
-
-<div class="row">
-
+<div class="row g-4">
     {% for tool in tools %}
-
-    <div class="col-lg-6 col-md-12 mb-4">
-
-        <div class="card h-100">
-
-            <div class="card-body text-center">
-
-                <div class="icon-large">
-                    {{ tool.icon }}
-                </div>
-
-                <h5 class="card-title">
-                    {{ tool.name }}
-                </h5>
-
-                <p class="card-text text-muted-custom">
-                    {{ tool.desc }}
-                </p>
-
-                <a href="{% url tool.url %}"
-                   class="btn btn-primary btn-lg mt-3">
-
-                    Use Tool →
-
-                </a>
-
+    <div class="col-md-6 col-lg-4">
+        <div class="card gradient-border h-100 p-4 text-center">
+            <div class="fs-1 mb-3">
+                {{ tool.icon }}
             </div>
-
+            <h4 class="card-title text-primary mb-2">
+                {{ tool.name }}
+            </h4>
+            <p class="text-secondary small mb-4">
+                {{ tool.desc }}
+            </p>
+            <div class="mt-auto">
+                <a href="{% url tool.url %}" class="btn btn-primary w-100">
+                    Use Tool &nbsp;⚡
+                </a>
+            </div>
         </div>
-
     </div>
-
     {% endfor %}
-
 </div>
-
 
 <div class="row mt-5">
-
     <div class="col-lg-8 offset-lg-2">
-
-        <div class="card">
-
-            <div class="card-header">
-                <h5>✨ Features</h5>
-            </div>
-
-            <div class="card-body">
-
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <ul>
-                            <li>✓ Secure & Private</li>
-                            <li>✓ No Registration Required</li>
-                            <li>✓ Fast Processing</li>
-                            <li>✓ High Quality Output</li>
-                        </ul>
-                    </div>
-
-                    <div class="col-md-6">
-                        <ul>
-                            <li>✓ Multiple Format Support</li>
-                            <li>✓ Batch Processing Available</li>
-                            <li>✓ OCR Technology</li>
-                            <li>✓ Free to Use</li>
-                        </ul>
-                    </div>
-
+        <div class="card gradient-border p-4">
+            <h4 class="mb-4 text-center text-primary">✨ Professional Features</h4>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> Secure & Private (No files saved)</li>
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> No Registration Required</li>
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> Ultra Fast Local Processing</li>
+                        <li class="mb-0"><span class="text-primary me-2">✓</span> Premium High Quality Output</li>
+                    </ul>
                 </div>
-
+                <div class="col-md-6">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> Multiple File Formats Support</li>
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> Advanced Local Compilations</li>
+                        <li class="mb-2"><span class="text-primary me-2">✓</span> High Fidelity Text Extraction (OCR)</li>
+                        <li class="mb-0"><span class="text-primary me-2">✓</span> 100% Free with No Daily Limits</li>
+                    </ul>
+                </div>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from prompt_toolkit import prompt
 from .models import Course, Semester, Subject, Department
 from django.contrib.auth.decorators import login_required
@@ -10,16 +11,17 @@ from .ai import get_final_answer
 # Create your views here.
 
 
+@login_required
 def index(request):
     return render(request, 'academics/index1.html')
 
 
-class CourseListView(ListView):
+class CourseListView(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'academics/course_list.html'
     context_object_name = 'courses'
 
-class CourseDetailView(DetailView):
+class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
     template_name = 'academics/course_detail.html'
     context_object_name = 'course'
@@ -72,13 +74,14 @@ class CourseDetailView(DetailView):
         
         return context
 
-class SubjectList(ListView):
+class SubjectList(LoginRequiredMixin, ListView):
     model = Subject
     template_name = 'academics/subject_list.html'
     context_object_name = 'subjects'
     
     
     
+@login_required
 def branch_subject_view(request):
     departments = Department.objects.all()
     selected_id = request.GET.get('branch_id')
@@ -321,6 +324,7 @@ def create_pdf_vectorstore(pdf_file, session_id):
 # =========================
 
 @csrf_exempt
+@login_required
 def ask_gemini(request):
 
     # PAGE LOAD
@@ -552,6 +556,7 @@ import requests
 import base64
 import time
 @csrf_exempt
+@login_required
 def run_code(request):
     context = {}
     if request.method == "POST":
@@ -626,6 +631,7 @@ DEFAULT_CODE = {
 }
 
 @csrf_exempt
+@login_required
 def run_code_big(request):
     output = ""
     code = ""
@@ -680,6 +686,34 @@ def run_code_big(request):
     }
     return render(request, "academics/coding_langs/big_compiler.html", context)
 
+
 @login_required
-def white_board(request):
-    return render(request, 'white_board.html')
+def ai_architect(request):
+    import subprocess
+    import os
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    exe_path = r"D:\AntiGravity\AI_Architect_Exe\dist\AI_Architect_v19.exe"
+    exe_exists = os.path.exists(exe_path)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'launch':
+            if not exe_exists:
+                messages.error(request, "AI Architect executable not found on the local path D:\\AntiGravity\\AI_Architect_Exe\\dist\\AI_Architect_v19.exe.")
+                return redirect('ai_architect')
+            try:
+                # Start the executable in a non-blocking background process
+                creation_flags = subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0
+                subprocess.Popen([exe_path], creationflags=creation_flags)
+                messages.success(request, "AI Architect launched successfully! Look for the application window on your desktop taskbar.")
+            except Exception as e:
+                messages.error(request, f"Error launching AI Architect: {str(e)}")
+            return redirect('ai_architect')
+
+    context = {
+        'exe_exists': exe_exists,
+        'download_url': 'https://drive.google.com/file/d/1VvAaE3eZI0s--TShg_fCnolH5StvgdWs/view?usp=sharing'
+    }
+    return render(request, 'academics/ai_architect.html', context)

@@ -5,11 +5,14 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>📑 Convert Word to PDF</h3>
-            </div>
-            <div class="card-body">
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">📑 Convert Word to PDF</h3>
+            
+            <div class="card-body p-0">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
@@ -19,12 +22,12 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.word_file.label }}</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.word_file.label }}</label>
                         <div class="file-input-wrapper">
                             {{ form.word_file }}
                             <label for="{{ form.word_file.id_for_label }}" class="file-input-label">
-                                <div>📁 Click to select DOCX or DOC file</div>
+                                <div>📁 Click to select DOCX or DOC file or drag & drop</div>
                                 <small>Supports .docx and .doc formats</small>
                             </label>
                         </div>
@@ -40,16 +43,14 @@
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Converts DOCX and DOC files</li>
-                    <li>Preserves text formatting</li>
-                    <li>Includes tables and images</li>
-                    <li>High-quality PDF output</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Converts Microsoft Word (DOCX/DOC) files into stable PDF format</li>
+                <li class="mb-2">100% preservation of text formatting, headings, alignment, and margins</li>
+                <li class="mb-2">Safely includes custom embedded tables, graphics, list structures, and images</li>
+                <li class="mb-0">High-quality, secure compilation completely free with unlimited use</li>
+            </ul>
         </div>
     </div>
 </div>

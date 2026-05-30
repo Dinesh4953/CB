@@ -1,0 +1,184 @@
+{% extends 'academics/base.html' %}
+
+{% block title %}AI Architect - Campus Bridge{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary mb-4">
+                &larr; Back to Home
+            </a>
+
+            <!-- Premium Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-2 text-gradient" style="border-bottom: none; padding-bottom: 0;">
+                    🏗️ AI Project Architect
+                </h1>
+                <p class="lead text-secondary">
+                    Generate complete modern applications, configure environments, and open them in VS Code instantly with local or cloud AI models.
+                </p>
+            </div>
+
+            <!-- Laptop-Only Warning Alert -->
+            <div class="alert alert-warning border-warning shadow-sm mb-5 p-4 rounded-4" role="alert">
+                <div class="d-flex align-items-start">
+                    <span class="fs-1 me-3">💻</span>
+                    <div>
+                        <h4 class="alert-heading fw-bold mb-2">Important Notice: Laptop Only & Native Execution</h4>
+                        <p class="mb-0 text-dark opacity-90">
+                            This tool requires access to local computer resources (such as <strong>VS Code</strong>, <strong>Ollama/Python compilers</strong>, and <strong>file directories</strong>). It is designed to run locally on your laptop or desktop and will <strong>not</strong> function on mobile, tablet, or external cloud deployment devices.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Left Panel: Information & Features -->
+                <div class="col-md-7">
+                    <div class="card gradient-border p-4 h-100 shadow-sm">
+                        <h3 class="mb-4 text-primary">✨ What is AI Architect?</h3>
+                        <p class="text-secondary leading-relaxed">
+                            AI Architect is an advanced developer tool that translates natural language prompts into complete, fully-functional, and production-ready applications. Rather than just returning snippets or placeholders, it designs an entire directory structure, creates all template elements (HTML/CSS/JS/Python), initializes environments, and loads everything up in your workspace.
+                        </p>
+
+                        <h4 class="mt-5 mb-3 text-secondary">🚀 Five-Stage Pipeline</h4>
+                        <div class="timeline mt-3">
+                            <div class="d-flex mb-3">
+                                <span class="badge bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">1</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Engine Connection</h6>
+                                    <p class="small text-secondary mb-0">Initializes Groq Cloud or pulls local Ollama models (e.g. gpt-oss, llama3) based on system RAM.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <span class="badge bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">2</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Blueprint Architecture</h6>
+                                    <p class="small text-secondary mb-0">Generates comprehensive project structures including multi-page templates and environment files.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <span class="badge bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">3</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Skyscraper File Construction</h6>
+                                    <p class="small text-secondary mb-0">Constructs clean, raw source code for every file sequentially using deep custom context rendering.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <span class="badge bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">4</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Environment Compilation</h6>
+                                    <p class="small text-secondary mb-0">Builds virtual environments (pip venv) or installs node packages (npm install) in the background.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-0">
+                                <span class="badge bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">5</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">VS Code Workspace Launch</h6>
+                                    <p class="small text-secondary mb-0">Opens the generated folder inside VS Code automatically and boots up servers instantly.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Launch & Download Operations -->
+                <div class="col-md-5">
+                    <div class="card gradient-border p-4 h-100 shadow-sm d-flex flex-column">
+                        <h3 class="mb-4 text-primary">⚙️ App Launcher</h3>
+
+                        <div class="mb-4 p-3 bg-light rounded-3">
+                            <div class="d-flex align-items-center">
+                                {% if exe_exists %}
+                                <span class="fs-4 me-2">🟢</span>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-success">Local Launcher Connected</h6>
+                                    <small class="text-secondary">v19 executable detected on host machine</small>
+                                </div>
+                                {% else %}
+                                <span class="fs-4 me-2">🟡</span>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-warning">Executable Standalone Mode</h6>
+                                    <small class="text-secondary">Ready for download / external trigger</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Launcher Trigger Button -->
+                        <div class="mb-5 mt-2">
+                            <form method="post" action="{% url 'ai_architect' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="launch">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow-sm hover-up">
+                                    ⚡ Launch AI Architect
+                                </button>
+                            </form>
+                            <small class="form-text text-muted d-block text-center mt-2">
+                                Starts the premium customtkinter GUI desktop client instantly.
+                            </small>
+                        </div>
+
+                        <hr class="my-4 text-muted">
+
+                        <!-- Direct Download Option -->
+                        <div class="mt-auto">
+                            <h5 class="mb-3 text-secondary fw-bold">📦 Download Executable Package</h5>
+                            <p class="text-secondary small">
+                                Would you prefer to download and run the standalone package directly on another laptop? Grab the latest pre-packaged Windows binary below.
+                            </p>
+                            <a href="{{ download_url }}" target="_blank" class="btn btn-outline-primary btn-lg w-100 py-3 mt-2 hover-up">
+                                📥 Download AI Architect v19
+                            </a>
+                            <small class="form-text text-muted d-block text-center mt-2">
+                                Google Drive Secured Link &bull; Windows Standalone EXE
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information / Requirements -->
+            <div class="card gradient-border mt-5 p-4 shadow-sm">
+                <h5 class="mb-3 text-primary">⚙️ Host Machine Prerequisites</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="p-2">
+                            <h6 class="fw-bold text-secondary mb-1">1. IDE Compatibility</h6>
+                            <small class="text-muted">Requires VS Code path registered in standard environment variables (`code` in command line).</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2">
+                            <h6 class="fw-bold text-secondary mb-1">2. Local Ollama (Optional)</h6>
+                            <small class="text-muted">To run generation natively, install Ollama from ollama.com with models like llama3 or phi3.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2">
+                            <h6 class="fw-bold text-secondary mb-1">3. Cloud Engines</h6>
+                            <small class="text-muted">Runs out-of-the-box using the built-in free Groq Cloud trial server keys (8 tries/week per device).</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-gradient {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hover-up {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-up:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.15) !important;
+    }
+</style>
+{% endblock %}

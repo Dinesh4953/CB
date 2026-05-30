@@ -160,20 +160,23 @@ img:hover{
     display: block;
     padding: 10px 15px;
     border-radius: 8px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-card-bg);
+    color: var(--theme-text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .option-box label:hover {
-    background: #e9ecef;
+    background-color: var(--theme-bg-secondary);
+    color: var(--theme-primary);
 }
 
 .option-box input[type="radio"]:checked + label {
-    border: 2px solid #0d6efd;
-    color: #0d6efd;
+    border: 2px solid var(--theme-primary);
+    color: var(--theme-primary);
     font-weight: bold;
-    background: #f1f5fb;
+    background-color: var(--theme-bg-tertiary);
 }
 
 </style>

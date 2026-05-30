@@ -5,11 +5,14 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>📚 Merge Multiple PDFs</h3>
-            </div>
-            <div class="card-body">
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">📚 Merge Multiple PDFs</h3>
+            
+            <div class="card-body p-0">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
@@ -19,12 +22,12 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.pdf_files.label }}</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.pdf_files.label }}</label>
                         <div class="file-input-wrapper">
                             {{ form.pdf_files }}
                             <label for="{{ form.pdf_files.id_for_label }}" class="file-input-label">
-                                <div>📁 Click to select PDFs or drag and drop</div>
+                                <div>📁 Click to select PDFs or drag & drop</div>
                                 <small>Select at least 2 PDF files</small>
                             </label>
                         </div>
@@ -40,17 +43,14 @@
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Merge 2 or more PDF files</li>
-                    <li>Files are merged in upload order</li>
-                    <li>Preserves all content and formatting</li>
-                    <li>Creates single output PDF</li>
-                    <li>Fast processing</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Merge 2 or more high-fidelity PDF documents into a single file</li>
+                <li class="mb-2">Files are merged strictly in the order they are uploaded</li>
+                <li class="mb-2">100% preservation of all original fonts, styles, formatting, and content</li>
+                <li class="mb-0">Secure and fast processing with high-performance compiler tools</li>
+            </ul>
         </div>
     </div>
 </div>

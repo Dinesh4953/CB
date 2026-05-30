@@ -5,11 +5,14 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>📋 Extract Text from PDF</h3>
-            </div>
-            <div class="card-body">
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">📋 Extract Text from PDF</h3>
+            
+            <div class="card-body p-0">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
@@ -19,12 +22,12 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.pdf_file.label }}</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.pdf_file.label }}</label>
                         <div class="file-input-wrapper">
                             {{ form.pdf_file }}
                             <label for="{{ form.pdf_file.id_for_label }}" class="file-input-label">
-                                <div>📁 Click to select PDF or drag and drop</div>
+                                <div>📁 Click to select PDF or drag & drop</div>
                                 <small>Maximum file size: 50MB</small>
                             </label>
                         </div>
@@ -40,16 +43,14 @@
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Extracts text from all PDF pages</li>
-                    <li>Page numbers are marked</li>
-                    <li>Downloads as .txt file</li>
-                    <li>Preserves text formatting</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Extracts all text content across every single page inside the uploaded PDF</li>
+                <li class="mb-2">Clearly marks page numbers inside the extracted file for easier navigation</li>
+                <li class="mb-2">Downloads instantly as editable plain text (.txt) file format</li>
+                <li class="mb-0">Full preservation of natural text reading flow and spacing</li>
+            </ul>
         </div>
     </div>
 </div>

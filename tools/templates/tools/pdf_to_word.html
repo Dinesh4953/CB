@@ -5,11 +5,14 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>📄 Convert PDF to Word</h3>
-            </div>
-            <div class="card-body">
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">📄 Convert PDF to Word</h3>
+            
+            <div class="card-body p-0">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
@@ -19,12 +22,12 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.pdf_file.label }}</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.pdf_file.label }}</label>
                         <div class="file-input-wrapper">
                             {{ form.pdf_file }}
                             <label for="{{ form.pdf_file.id_for_label }}" class="file-input-label">
-                                <div>📁 Click to select PDF</div>
+                                <div>📁 Click to select PDF or drag & drop</div>
                                 <small>Converts to editable DOCX format</small>
                             </label>
                         </div>
@@ -40,16 +43,14 @@
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Converts PDF to editable DOCX</li>
-                    <li>Extracts all text content</li>
-                    <li>Maintains document structure</li>
-                    <li>Compatible with Microsoft Word</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Converts complex PDF documents into fully editable Word (DOCX) files</li>
+                <li class="mb-2">Extracts all text components with superior local parsing tools</li>
+                <li class="mb-2">Best-in-class structure preservation of original page flow and layouts</li>
+                <li class="mb-0">Fully compatible with Microsoft Word, LibreOffice, and Google Docs</li>
+            </ul>
         </div>
     </div>
 </div>

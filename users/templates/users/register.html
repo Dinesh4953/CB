@@ -1,38 +1,48 @@
- {% extends 'academics/base.html' %}
+{% extends 'academics/base.html' %}
+
 {% block body %}
-<body class="bg-light">
+<div class="container py-4">
+    <div class="row align-items-center justify-content-center min-vh-80 g-5">
+        <!-- Left Side: Welcome Section -->
+        <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+            <div class="fs-1 mb-3">🎓</div>
+            <h1 class="display-4 fw-bold mb-3" style="background: var(--gradient-border); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border-bottom: none; padding-bottom: 0; display: inline-block;">
+                Welcome to Campus Bridge
+            </h1>
+            <p class="lead text-secondary" style="font-size: 1.25rem; line-height: 1.7;">
+                Your premium one-stop platform for learning, advanced multi-language coding, interactive AI tutoring, and professional career growth.
+            </p>
+        </div>
+        <!-- Right Side: Register Form -->
+        <div class="col-lg-5 col-md-8">
+            <div class="card gradient-border p-4 p-md-5">
+                <h2 class="text-center mb-4">📝 Sign Up</h2>
+                <p class="text-secondary text-center mb-4 small">Create your new Campus Bridge account</p>
 
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <div class="card shadow p-4">
-                    <h2 class="text-center mb-4">Sign Up</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
 
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label class="form-label">{{ field.label_tag }}</label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small">
-                                        {{ field.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 mt-4 py-2">Create Account</button>
+                </form>
 
-                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-                    </form>
-
+                <div class="text-center mt-4">
+                    <span class="text-secondary small">Already have an account?</span>
+                    <a href="{% url 'login' %}" class="small ms-1 fw-bold">Sign In here</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS (optional but recommended) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
+</div>
 {% endblock %}

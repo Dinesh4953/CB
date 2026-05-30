@@ -6,6 +6,7 @@ from .models import User
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def problem_list(request):
     selected_tag = request.GET.get('tag')
     selected_diff = request.GET.get('difficulty')
@@ -103,6 +104,7 @@ def problem_detail(request, pk):
         'has_solved' : has_solved
     })
 
+@login_required
 def problem_detail_solved(request, pk):
     problem = get_object_or_404(PracticeQuestions, pk=pk)
     return render(request, 'practice/problem_detail_solved.html', {'problem': problem})
@@ -152,6 +154,7 @@ def fetch_solved_problems_for_user(user):
 
 
 
+@login_required
 def problem_list_1(request):
     
     if request.user.is_authenticated:

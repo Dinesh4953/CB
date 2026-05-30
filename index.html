@@ -2,11 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Campus Bridge Landing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Campus Bridge</title>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="/static/theme.css?v=1.2">
+    <style>
+        .landing-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: var(--theme-bg-primary);
+        }
+        .landing-card {
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            padding: 3rem 2rem !important;
+        }
+        .landing-logo {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .landing-title {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            background: var(--gradient-border);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-bottom: none;
+            padding-bottom: 0;
+            display: block;
+        }
+        .landing-subtitle {
+            font-size: 1.1rem;
+            color: var(--theme-text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Campus Bridge</h1>
-    <p>Your learning platform for coding and academics.</p>
-    <a href="/academics/index_main">Go to Home</a>
+    <div class="landing-container">
+        <div class="card gradient-border landing-card">
+            <div class="landing-logo">🎓</div>
+            <h1 class="landing-title">Welcome to Campus Bridge</h1>
+            <p class="landing-subtitle">Your premium one-stop platform for learning, advanced multi-language coding, interactive AI tutoring, and professional career growth.</p>
+            <div class="d-grid gap-2 col-8 mx-auto">
+                <a href="/academics/index_main" class="btn btn-primary btn-lg px-5 py-3">
+                    Go to Home &nbsp;🚀
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme System JavaScript -->
+    <script src="/static/theme.js?v=1.2"></script>
 </body>
 </html>

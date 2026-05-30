@@ -1,67 +1,108 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Your CV - Campus Bridge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Document</title>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="{% static 'theme.css' %}?v=1.2">
+    <style>
+        .cv-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 15px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .btn-home {
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-   <div class="container">
-    <div class="row">
-        <div class="col-md-7">
-             <form method="POST">
-                {% csrf_token %}
-  <div class="form-group">
-    <label for="">Name</label>
-    <input type="text" class="form-control" id="name" name="name">
-  </div>
+   <div class="cv-container">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-home">
+        <i class="fa fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="card gradient-border p-4 p-md-5">
+        <h2 class="mb-4 text-center">📄 CV Information Form</h2>
+        <p class="text-secondary text-center mb-5">Fill in the details below to generate your professional resume.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="e.g. Dinesh Kumar">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. dinesh@example.com">
+                    </div>
+                </div>
+            </div>
 
-   <div class="form-group">
-    <label for="">Email</label>
-    <input type="text" class="form-control" id="email" name="email">
-  </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="e.g. +91 98765 43210">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="degree">Degree / Qualification</label>
+                        <input type="text" class="form-control" id="degree" name="degree" placeholder="e.g. B.Tech in Computer Science">
+                    </div>
+                </div>
+            </div>
 
-  <div class="form-group">
-    <label for="">Phone</label>
-    <input type="text" class="form-control" id="phone" name="phone">
-  </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="school">School / College</label>
+                        <input type="text" class="form-control" id="school" name="school" placeholder="e.g. Delhi Public School">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="university">University</label>
+                        <input type="text" class="form-control" id="university" name="university" placeholder="e.g. Anna University">
+                    </div>
+                </div>
+            </div>
 
-  <div class="form-group">
-    <label for="">About you</label>
-    <textarea type="text" class="form-control" id="summary" name="summary"></textarea>
-  </div>
+            <div class="form-group">
+                <label for="summary">About You (Summary)</label>
+                <textarea class="form-control" id="summary" name="summary" rows="4" placeholder="Brief professional summary about your background and aspirations..."></textarea>
+            </div>
 
-  <div class="form-group">
-    <label for="">Degree</label>
-    <input type="text" class="form-control" id="degree" name="degree">
-  </div>
+            <div class="form-group">
+                <label for="previous_work">Previous Work Experience</label>
+                <textarea class="form-control" id="previous_work" name="previous_work" rows="4" placeholder="List your past roles, companies, and key achievements..."></textarea>
+            </div>
 
-  <div class="form-group">
-    <label for="">School</label>
-    <input type="text" class="form-control" id="school" name="school">
-  </div>
+            <div class="form-group">
+                <label for="skills">Skills & Technologies</label>
+                <textarea class="form-control" id="skills" name="skills" rows="3" placeholder="e.g. Python, Django, HTML, CSS, JavaScript, Git"></textarea>
+            </div>
 
-  <div class="form-group">
-    <label for="">University</label>
-    <input type="text" class="form-control" id="university" name="university">
-  </div>
-
-  <div class="form-group">
-    <label for="">Previous Work</label>
-    <textarea type="text" class="form-control" id="previous_work" name="previous_work"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="">Skills</label>
-    <textarea type="text" class="form-control" id="skills" name="skills"></textarea>
-  </div>
-
-  
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-        </div>
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-primary btn-lg px-5">Generate CV &nbsp;✨</button>
+            </div>
+        </form>
     </div>
    </div>
+   
+   <!-- Theme System JavaScript -->
+   <script src="{% static 'theme.js' %}?v=1.2"></script>
 </body>
 </html>

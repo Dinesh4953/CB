@@ -5,11 +5,14 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>🔍 Extract Text from Images (OCR)</h3>
-            </div>
-            <div class="card-body">
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">🔍 Extract Text from Images (OCR)</h3>
+            
+            <div class="card-body p-0">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
                         {% for error in form.non_field_errors %}<strong>Error:</strong> {{ error }}{% endfor %}
@@ -19,12 +22,12 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.image_file.label }}</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.image_file.label }}</label>
                         <div class="file-input-wrapper">
                             {{ form.image_file }}
                             <label for="{{ form.image_file.id_for_label }}" class="file-input-label">
-                                <div>📁 Click to select image</div>
+                                <div>📁 Click to select image or drag & drop</div>
                                 <small>Supports JPG, PNG, GIF, BMP</small>
                             </label>
                         </div>
@@ -40,17 +43,14 @@
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Optical Character Recognition (OCR)</li>
-                    <li>Extracts text from images</li>
-                    <li>Supports multiple image formats</li>
-                    <li>Downloads as plain text file</li>
-                    <li>Best results with clear, high-resolution images</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Optical Character Recognition (OCR) extracts text from images</li>
+                <li class="mb-2">Supports high-fidelity JPG, PNG, GIF, BMP image formats</li>
+                <li class="mb-2">Downloads instantly as editable plain text (.txt) file</li>
+                <li class="mb-0">Best results are achieved with clear, high-resolution text images</li>
+            </ul>
         </div>
     </div>
 </div>

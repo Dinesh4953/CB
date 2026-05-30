@@ -5,10 +5,13 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
-        <div class="card">
-            <div class="card-header">
-                <h3>🖼️ Convert Images to PDF</h3>
-            </div>
+        <a href="{% url 'tools:index' %}" class="btn btn-outline-secondary mb-4">
+            &larr; Back to Tools
+        </a>
+
+        <div class="card gradient-border p-4">
+            <h3 class="mb-4">🖼️ Convert Images to PDF</h3>
+            
             <div class="card-body">
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger" role="alert">
@@ -20,56 +23,48 @@
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label class="form-label">{{ form.image_files.label }}</label>
-                        <div>
-    {{ form.image_files }}
-
-    <small class="text-muted">
-        Supports JPG, PNG, GIF, BMP (Multiple files supported)
-    </small>
-</div>
+                        <label class="form-label fw-bold">{{ form.image_files.label }}</label>
+                        <div class="file-input-wrapper">
+                            {{ form.image_files }}
+                            <label for="{{ form.image_files.id_for_label }}" class="file-input-label">
+                                <div>📁 Click to select images or drag & drop</div>
+                                <small>Supports JPG, PNG, GIF, BMP (Multiple files supported)</small>
+                            </label>
+                        </div>
                         {% if form.image_files.errors %}
                             <div class="alert alert-danger mt-2">{{ form.image_files.errors.0 }}</div>
                         {% endif %}
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">{{ form.orientation.label }}</label>
-                        <div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ form.orientation.label }}</label>
+                        <div class="d-flex gap-4">
                             {% for radio in form.orientation %}
                                 <div class="form-check">
-
                                     {{ radio.tag }}
-
-                                    <label class="form-check-label"
-                                        for="{{ radio.id_for_label }}">
-
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">
                                         {{ radio.choice_label }}
-
                                     </label>
-
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
+                    <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">🔄 Convert to PDF</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header"><h5>ℹ️ Features</h5></div>
-            <div class="card-body">
-                <ul>
-                    <li>Converts multiple images to single PDF</li>
-                    <li>Supports JPG, PNG, GIF, BMP</li>
-                    <li>Choose portrait or landscape orientation</li>
-                    <li>Maintains image quality</li>
-                </ul>
-            </div>
+        <div class="card gradient-border mt-4 p-4">
+            <h5 class="mb-3 text-primary">ℹ️ Features</h5>
+            <ul class="mb-0">
+                <li class="mb-2">Converts multiple images to single, unified PDF document</li>
+                <li class="mb-2">Supports high-fidelity JPG, PNG, GIF, BMP formats</li>
+                <li class="mb-2">Customize orientation (Portrait or Landscape layout)</li>
+                <li class="mb-0">Zero compression loss, completely maintains original image quality</li>
+            </ul>
         </div>
     </div>
 </div>

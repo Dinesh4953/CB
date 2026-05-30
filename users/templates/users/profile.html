@@ -2,61 +2,79 @@
 {% load static %}
 {% block body %}
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7 col-lg-6">
 
-            <div class="card shadow p-4 text-center">
-                <h3 class="mb-4">My Profile</h3>
+        <div class="card gradient-border p-4 p-md-5 text-center">
+            <h2 class="mb-4">👤 My Profile</h2>
+            <p class="text-secondary mb-5">Manage your personal information and competitive handles</p>
 
-                <!-- Profile Picture -->
+            <!-- Profile Picture -->
+            <div class="mb-4">
                 {% if user.profile.avatar %}
                     <img src="{{ user.profile.avatar.url }}" alt="Profile"
-                         class="rounded-circle img-thumbnail mb-3"
-                         width="150" height="150">
+                         class="rounded-circle img-thumbnail shadow-sm"
+                         width="140" height="140" style="object-fit: cover; border: 3px solid var(--theme-primary);">
                 {% else %}
                     <img src="{% static 'images/profilepic.jpg' %}" alt="Default Profile"
-                         class="rounded-circle img-thumbnail mb-3"
-                         width="150" height="150">
+                         class="rounded-circle img-thumbnail shadow-sm"
+                         width="140" height="140" style="object-fit: cover; border: 3px solid var(--theme-primary);">
                 {% endif %}
-
-                <!-- User Info -->
-                <p class="lead"><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Bio:</strong> {{ user.profile.bio|default:"No bio provided." }}</p>
-                <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary mt-2">Edit Bio</a>
-
-                <!-- Codeforces Handle Section -->
-                {% if user.profile.codeforces_handle %}
-                    <p class="mt-3"><strong>Codeforces:</strong> 
-                        <a href="https://codeforces.com/profile/{{ user.profile.codeforces_handle }}" 
-                           target="_blank" class="text-decoration-none">
-                            {{ user.profile.codeforces_handle }}
-                        </a>
-                    </p>
-                {% else %}
-                    <form method="POST" action="{% url 'edit_profile' %}" class="mt-3">
-                        {% csrf_token %}
-                        <label for="cf_handle"><strong>Add Codeforces Handle:</strong></label>
-                        <input type="text" name="cf_handle" id="cf_handle" class="form-control my-2" required>
-                        <button type="submit" class="btn btn-success btn-sm">Link Account</button>
-                    </form>
-                {% endif %}
-
-                <!-- Solved Problems Button -->
-                <a href="{% url 'solved_problems' %}" class="btn btn-outline-success mt-3">
-                    📘 View Solved Problems
-                </a>
-
-                <!-- Logout Button -->
-                <form method="POST" action="{% url 'logout' %}" class="d-grid mt-3">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-block">Logout</button>
-                </form>
-
             </div>
 
+            <!-- User Info -->
+            <div class="p-3 rounded bg-secondary-subtle mb-4 text-start">
+                <div class="mb-2"><strong>Username:</strong> <span class="text-primary">{{ user.username }}</span></div>
+                <div class="mb-2"><strong>Email:</strong> <span>{{ user.email }}</span></div>
+                <div class="mb-0"><strong>Bio:</strong> <span class="text-secondary">{{ user.profile.bio|default:"No bio provided." }}</span></div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary">
+                    ⚙️ Edit Profile & Bio
+                </a>
+            </div>
+
+            <!-- Codeforces Handle Section -->
+            <div class="card bg-secondary-subtle p-3 mt-4 text-start border-0">
+                {% if user.profile.codeforces_handle %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>🏆 Codeforces:</strong> 
+                            <a href="https://codeforces.com/profile/{{ user.profile.codeforces_handle }}" 
+                               target="_blank" class="fw-bold ms-2">
+                                {{ user.profile.codeforces_handle }}
+                            </a>
+                        </div>
+                        <span class="badge bg-success">Linked</span>
+                    </div>
+                {% else %}
+                    <form method="POST" action="{% url 'edit_profile' %}">
+                        {% csrf_token %}
+                        <label for="cf_handle" class="form-label fw-bold">🏆 Add Codeforces Handle:</label>
+                        <div class="input-group">
+                            <input type="text" name="cf_handle" id="cf_handle" class="form-control" placeholder="e.g. tourist" required>
+                            <button type="submit" class="btn btn-primary">Link</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+
+            <!-- Solved Problems Button -->
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'solved_problems' %}" class="btn btn-primary py-2.5">
+                    📘 View Solved Problems
+                </a>
+            </div>
+
+            <!-- Logout Button -->
+            <form method="POST" action="{% url 'logout' %}" class="d-grid mt-4">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-dark">Logout</button>
+            </form>
+
         </div>
+
     </div>
 </div>
 
