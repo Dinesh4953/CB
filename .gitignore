@@ -1,6 +1,5 @@
 .vercel
 staticfiles/*
-static/*
 
 !staticfiles/images/
 !staticfiles/academics/
