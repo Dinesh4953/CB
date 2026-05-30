@@ -235,7 +235,7 @@ import os
 # =========================
 
 model = ChatOllama(
-    model="gemma3:1b",
+    model="qwen2.5:7b",
     temperature=0.3
 )
 
@@ -716,4 +716,4 @@ def ai_architect(request):
         'exe_exists': exe_exists,
         'download_url': 'https://drive.google.com/file/d/1VvAaE3eZI0s--TShg_fCnolH5StvgdWs/view?usp=sharing'
     }
-    return render(request, 'academics/ai_architect.html', context)
+    return render(request, 'academics/ai_architect.html', context)
