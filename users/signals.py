@@ -6,11 +6,15 @@ from .models import Profile
 
 @receiver(post_save, sender=User)
 def build_profile(sender, instance, created, **kwargs):
+    if kwargs.get('raw', False):
+        return
     if created:
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
+    if kwargs.get('raw', False):
+        return
     try:
         instance.profile.save()
     except ObjectDoesNotExist:
